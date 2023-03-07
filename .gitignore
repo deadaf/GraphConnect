@@ -1,0 +1,9 @@
+#to ignore binary files :c
+
+#ignore everything
+*
+#unignore all directories
+!/**/
+
+#unignore files with extensions
+!*.* 
