@@ -2,6 +2,36 @@
 #include <vector>
 using namespace std;
 
+/**
+ * Sorts the elements in the range [first, last) using the given comparison function.
+ *
+ * @tparam Iterator The type of iterator used to access the elements.
+ * @tparam Compare The type of the comparison function.
+ * @param first An iterator to the first element in the range to be sorted.
+ * @param last An iterator to one-past-the-last element in the range to be sorted.
+ * @param cmp A binary comparison function that takes two elements as arguments and returns true if the first argument is less than the second.
+ *
+ * @note This function uses the Selection Sort algorithm, which has a worst-case time complexity of O(n^2).
+ *       This algorithm is not recommended for sorting large collections of data.
+ */
+template <typename Iterator, typename Compare>
+void mySort(Iterator first, Iterator last, Compare cmp)
+{
+    // Iterate over the range [first, last) and select the i-th smallest element by swapping it with the element at index i.
+    for (auto it = first; it != last; ++it)
+    {
+        // Iterate over the range [it, last) to find the smallest element.
+        for (auto jt = it; jt != last; ++jt)
+        {
+            // If the current element is smaller than the element at index i, swap them.
+            if (cmp(*jt, *it))
+            {
+                swap(*it, *jt);
+            }
+        }
+    }
+}
+
 class User
 {
 public:
@@ -123,37 +153,49 @@ public:
         add_new_user(User("Grace", 29, 'F', "Red"));
         add_new_user(User("Henry", 27, 'M', "Blue"));
     }
-};
 
-/**
- * Sorts the elements in the range [first, last) using the given comparison function.
- *
- * @tparam Iterator The type of iterator used to access the elements.
- * @tparam Compare The type of the comparison function.
- * @param first An iterator to the first element in the range to be sorted.
- * @param last An iterator to one-past-the-last element in the range to be sorted.
- * @param cmp A binary comparison function that takes two elements as arguments and returns true if the first argument is less than the second.
- *
- * @note This function uses the Selection Sort algorithm, which has a worst-case time complexity of O(n^2).
- *       This algorithm is not recommended for sorting large collections of data.
- */
-template <typename Iterator, typename Compare>
-void mySort(Iterator first, Iterator last, Compare cmp)
-{
-    // Iterate over the range [first, last) and select the i-th smallest element by swapping it with the element at index i.
-    for (auto it = first; it != last; ++it)
+    vector<User> find_similar_named_users(string name)
     {
-        // Iterate over the range [it, last) to find the smallest element.
-        for (auto jt = it; jt != last; ++jt)
+        vector<User> matching_users;
+        int n = name.size();
+
+        for (auto it = users.begin(); it != users.end(); ++it)
         {
-            // If the current element is smaller than the element at index i, swap them.
-            if (cmp(*jt, *it))
+            int m = it->name.size();
+            vector<vector<int>> dp(n + 1, vector<int>(m + 1, 0));
+
+            for (int i = 1; i <= n; i++)
             {
-                swap(*it, *jt);
+                for (int j = 1; j <= m; j++)
+                {
+                    if (name[i - 1] == it->name[j - 1])
+                    {
+                        dp[i][j] = dp[i - 1][j - 1] + 1;
+                    }
+                    else
+                    {
+                        dp[i][j] = max(dp[i - 1][j], dp[i][j - 1]);
+                    }
+                }
+            }
+
+            int lcs_length = dp[n][m];
+            double similarity = (double)lcs_length / max(n, m);
+
+            if (similarity >= 0.5)
+            {
+                matching_users.push_back(*it);
             }
         }
+
+        if (matching_users.empty())
+        {
+            cout << "No matching users found." << endl;
+        }
+
+        return matching_users;
     }
-}
+};
 
 int main()
 {
@@ -171,7 +213,8 @@ int main()
         cout << "4. Get matching users" << endl;
         cout << "5. Sort users by name" << endl;
         cout << "6. Sort users by age" << endl;
-        cout << "7. Exit" << endl;
+        cout << "7. Find Similar Users" << endl;
+        cout << "8. Exit" << endl;
 
         int option;
         cin >> option;
@@ -243,6 +286,18 @@ int main()
             break;
         }
         case 7:
+        {
+            vector<User> matching_users = graph.find_similar_named_users("Alicia");
+            if (!matching_users.empty())
+            {
+                for (auto user : matching_users)
+                {
+                    cout << "Name: " << user.name << ", Age: " << user.age << ", Gender: " << user.gender << ", Favorite Color: " << user.favorite_color << endl;
+                }
+            }
+            break;
+        }
+        case 8:
         {
             running = false;
             break;
