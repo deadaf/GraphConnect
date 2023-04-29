@@ -1,15 +1,12 @@
 #include <iostream>
-#include <string>
 #include <vector>
-#include <unordered_map>
-#include <queue>
-#include <cstdlib>
+#include <algorithm>
 
 using namespace std;
 
-// Define User structure
-struct User
+class User
 {
+public:
     string name;
     int age;
     char gender;
@@ -24,162 +21,204 @@ struct User
     }
 };
 
-// Define Graph structure
 class Graph
 {
 private:
-    unordered_map<string, vector<string>> adjacency_list;
+    vector<User> users;
 
 public:
-    void add_user(User user)
+    void add_new_user(User user)
     {
-        string name = user.name;
-        adjacency_list[name] = vector<string>{to_string(user.age), string(1, user.gender), user.favorite_color};
+        users.push_back(user);
     }
 
-    void add_edge(string user1, string user2)
+    void delete_a_user(string name)
     {
-        if (adjacency_list.find(user1) != adjacency_list.end() && adjacency_list.find(user2) != adjacency_list.end())
+        bool found = false;
+        for (auto it = users.begin(); it != users.end(); ++it)
         {
-            adjacency_list[user1].push_back(user2);
-            adjacency_list[user2].push_back(user1);
-        }
-    }
-    vector<string> get_matches(string name)
-    {
-        vector<string> matches;
-        if (adjacency_list.find(name) != adjacency_list.end())
-        {
-            auto user_data = adjacency_list[name];
-            for (auto &kv : adjacency_list)
+            if (it->name == name)
             {
-                auto &other_name = kv.first;
-                if (other_name != name && user_data == kv.second)
-                {
-                    matches.push_back(other_name);
-                }
+                found = true;
+                users.erase(it);
+                break;
             }
         }
-        return matches;
-    }
-    void print_graph()
-    {
-        for (auto &kv : adjacency_list)
+        if (!found)
         {
-            cout << kv.first << ": ";
-            for (auto &adj_user : kv.second)
-            {
-                cout << adj_user << " ";
-            }
-            cout << endl;
-        }
-    }
-};
-
-// Define GraphConnect application
-class GraphConnect
-{
-public:
-    Graph graph;
-
-public:
-    void create_user()
-    {
-        string name, favorite_color;
-        int age;
-        char gender;
-        cout << "Enter name: ";
-        cin >> name;
-        cout << "Enter age: ";
-        cin >> age;
-        cout << "Enter gender (M/F): ";
-        cin >> gender;
-        cout << "Enter favorite color: ";
-        cin >> favorite_color;
-        User user(name, age, gender, favorite_color);
-        graph.add_user(user);
-        cout << "User created successfully!" << endl;
-    }
-
-    void find_matches()
-    {
-        string name;
-        cout << "Enter name: ";
-        cin >> name;
-        auto matches = graph.get_matches(name);
-        if (matches.empty())
-        {
-            cout << "No matches found." << endl;
+            cout << "User not found" << endl;
         }
         else
         {
-            cout << "Matches for " << name << ":" << endl;
-            for (auto &match : matches)
+            cout << "User deleted" << endl;
+        }
+    }
+
+    User *find_a_user_by_name(string name)
+    {
+        for (auto it = users.begin(); it != users.end(); ++it)
+        {
+            if (it->name == name)
             {
-                cout << match << endl;
+                return &(*it);
+            }
+        }
+        return nullptr;
+    }
+
+    void get_matching_users(User user)
+    {
+        int count = 0;
+        for (auto it = users.begin(); it != users.end(); ++it)
+        {
+            if (it->name != user.name)
+            {
+                count = 0;
+                if (it->age == user.age)
+                {
+                    count++;
+                }
+                if (it->gender == user.gender)
+                {
+                    count++;
+                }
+                if (it->favorite_color == user.favorite_color)
+                {
+                    count++;
+                }
+                if (count >= 2)
+                {
+                    cout << "Name: " << it->name << ", Age: " << it->age << ", Gender: " << it->gender << ", Favorite Color: " << it->favorite_color << endl;
+                }
             }
         }
     }
-    void add_dummy_users()
+
+    void sort_users_by_name()
     {
-        vector<User> dummy_users{
-            User("Alice", 22, 'F', "Blue"),
-            User("Bob", 26, 'M', "Green"),
-            User("Charlie", 30, 'M', "Red"),
-            User("David", 28, 'M', "Blue"),
-            User("Eve", 24, 'F', "Green"),
-            User("Frank", 32, 'M', "Yellow"),
-            User("Grace", 29, 'F', "Red"),
-            User("Henry", 27, 'M', "Blue"),
-            User("Ivy", 25, 'F', "Green"),
-            User("Jack", 31, 'M', "Yellow")};
-        for (const auto &user : dummy_users)
+        sort(users.begin(), users.end(), [](const User &user1, const User &user2)
+             { return user1.name < user2.name; });
+        for (auto it = users.begin(); it != users.end(); ++it)
         {
-            graph.add_user(user);
+            cout << "Name: " << it->name << ", Age: " << it->age << ", Gender: " << it->gender << ", Favorite Color: " << it->favorite_color << endl;
         }
-        cout << "Added " << dummy_users.size() << " dummy users to the graph." << endl;
+    }
+
+    void sort_users_by_age()
+    {
+        sort(users.begin(), users.end(), [](const User &user1, const User &user2)
+             { return user1.age < user2.age; });
+        for (auto it = users.begin(); it != users.end(); ++it)
+        {
+            cout << "Name: " << it->name << ", Age: " << it->age << ", Gender: " << it->gender << ", Favorite Color: " << it->favorite_color << endl;
+        }
+    }
+
+    void addDummyUsers()
+    {
+        add_new_user(User("Alice", 22, 'F', "Blue"));
+        add_new_user(User("Bob", 26, 'M', "Green"));
+        add_new_user(User("Charlie", 30, 'M', "Red"));
+        add_new_user(User("David", 28, 'M', "Blue"));
+        add_new_user(User("Eve", 22, 'F', "Green"));
+        add_new_user(User("Frank", 32, 'M', "Yellow"));
+        add_new_user(User("Grace", 29, 'F', "Red"));
+        add_new_user(User("Henry", 27, 'M', "Blue"));
     }
 };
 
 int main()
 {
-    GraphConnect app;
+
+    Graph graph;
     bool running = true;
+
     while (running)
     {
         cout << "GraphConnect - Choose an option:" << endl;
-        cout << "1. Create user" << endl;
-        cout << "2. Find matches" << endl;
-        cout << "3. Remove user" << endl;
-        cout << "4. Add dummy users" << endl;
-        cout << "5. Print graph" << endl;
-        cout << "6. Quit" << endl;
-        int choice;
-        cin >> choice;
+        cout << "0. Add dummy users" << endl; // for testing purposes
+        cout << "1. Add a new user" << endl;
+        cout << "2. Delete a user" << endl;
+        cout << "3. Find a user by name" << endl;
+        cout << "4. Get matching users" << endl;
+        cout << "5. Sort users by name" << endl;
+        cout << "6. Sort users by age" << endl;
+        cout << "7. Exit" << endl;
+
+        int option;
+        cin >> option;
+
         system("clear"); // clear the console
-        switch (choice)
+        switch (option)
         {
+
+        case 0:
+            graph.addDummyUsers();
+            cout << "=> Added dummy users" << endl;
+            break;
+
         case 1:
-            app.create_user();
+            // graph.add_new_user();
             break;
+
         case 2:
-            app.find_matches();
+        {
+
+            cout << "Enter the name of the user you want to delete: ";
+            string name;
+            cin >> name;
+            graph.delete_a_user(name);
             break;
+        }
+
         case 3:
-            // app.remove_user();
+        {
+            cout << "Enter the name of the user you want to find: ";
+            string user_to_find;
+            cin >> user_to_find;
+            User *searchResult = graph.find_a_user_by_name(user_to_find);
+            if (searchResult != nullptr)
+            {
+                cout << searchResult->name << " " << searchResult->age << endl;
+            }
+            else
+            {
+                cout << "User not found" << endl;
+            }
             break;
+        }
+
         case 4:
-            app.add_dummy_users();
+        {
+            cout << "Enter the name of the user you want to find matches for: ";
+            string user_to_find;
+            cin >> user_to_find;
+            User *searchResult = graph.find_a_user_by_name(user_to_find);
+            if (searchResult != nullptr)
+            {
+                graph.get_matching_users(*searchResult);
+            }
+            else
+            {
+                cout << "User not found" << endl;
+            }
             break;
+        }
         case 5:
-            app.graph.print_graph();
+        {
+            graph.sort_users_by_name();
             break;
+        }
         case 6:
+        {
+            graph.sort_users_by_age();
+            break;
+        }
+        case 7:
+        {
             running = false;
             break;
-        default:
-            cout << "Invalid choice. Please try again." << endl;
+        }
         }
     }
-    return 0;
 }
