@@ -1,7 +1,5 @@
 #include <iostream>
 #include <vector>
-#include <algorithm>
-
 using namespace std;
 
 class User
@@ -96,8 +94,8 @@ public:
 
     void sort_users_by_name()
     {
-        sort(users.begin(), users.end(), [](const User &user1, const User &user2)
-             { return user1.name < user2.name; });
+        mySort(users.begin(), users.end(), [](const User &user1, const User &user2)
+               { return user1.name < user2.name; });
         for (auto it = users.begin(); it != users.end(); ++it)
         {
             cout << "Name: " << it->name << ", Age: " << it->age << ", Gender: " << it->gender << ", Favorite Color: " << it->favorite_color << endl;
@@ -106,8 +104,8 @@ public:
 
     void sort_users_by_age()
     {
-        sort(users.begin(), users.end(), [](const User &user1, const User &user2)
-             { return user1.age < user2.age; });
+        mySort(users.begin(), users.end(), [](const User &user1, const User &user2)
+               { return user1.age < user2.age; });
         for (auto it = users.begin(); it != users.end(); ++it)
         {
             cout << "Name: " << it->name << ", Age: " << it->age << ", Gender: " << it->gender << ", Favorite Color: " << it->favorite_color << endl;
@@ -126,6 +124,36 @@ public:
         add_new_user(User("Henry", 27, 'M', "Blue"));
     }
 };
+
+/**
+ * Sorts the elements in the range [first, last) using the given comparison function.
+ *
+ * @tparam Iterator The type of iterator used to access the elements.
+ * @tparam Compare The type of the comparison function.
+ * @param first An iterator to the first element in the range to be sorted.
+ * @param last An iterator to one-past-the-last element in the range to be sorted.
+ * @param cmp A binary comparison function that takes two elements as arguments and returns true if the first argument is less than the second.
+ *
+ * @note This function uses the Selection Sort algorithm, which has a worst-case time complexity of O(n^2).
+ *       This algorithm is not recommended for sorting large collections of data.
+ */
+template <typename Iterator, typename Compare>
+void mySort(Iterator first, Iterator last, Compare cmp)
+{
+    // Iterate over the range [first, last) and select the i-th smallest element by swapping it with the element at index i.
+    for (auto it = first; it != last; ++it)
+    {
+        // Iterate over the range [it, last) to find the smallest element.
+        for (auto jt = it; jt != last; ++jt)
+        {
+            // If the current element is smaller than the element at index i, swap them.
+            if (cmp(*jt, *it))
+            {
+                swap(*it, *jt);
+            }
+        }
+    }
+}
 
 int main()
 {
