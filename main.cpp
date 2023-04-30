@@ -1,5 +1,6 @@
 #include <iostream>
 #include <vector>
+#include <bits/stdc++.h>
 using namespace std;
 
 /**
@@ -39,13 +40,74 @@ public:
     int age;
     char gender;
     string favorite_color;
+    string password;
 
-    User(string name, int age, char gender, string favorite_color)
+    User(string name, int age, char gender, string favorite_color, string password = "abcd")
     {
         this->name = name;
         this->age = age;
         this->gender = gender;
         this->favorite_color = favorite_color;
+
+        // Huffman Encoding
+        unordered_map<char, int> freq;
+        for (char c : password)
+            freq[c]++;
+
+        priority_queue<pair<int, Node *>, vector<pair<int, Node *>>, greater<pair<int, Node *>>> pq;
+
+        for (auto p : freq)
+            pq.push({p.second, new Node(p.first)});
+
+        while (pq.size() > 1)
+        {
+            auto p1 = pq.top();
+            pq.pop();
+            auto p2 = pq.top();
+            pq.pop();
+
+            auto node = new Node('\0');
+            node->left = p1.second;
+            node->right = p2.second;
+            pq.push({p1.first + p2.first, node});
+        }
+
+        auto root = pq.top().second;
+
+        unordered_map<char, string> huffmanCode;
+        encode(root, "", huffmanCode);
+
+        string encodedPassword = "";
+        for (char c : password)
+            encodedPassword += huffmanCode[c];
+
+        this->password = encodedPassword;
+    }
+
+private:
+    struct Node
+    {
+        char ch;
+        int freq;
+        Node *left, *right;
+
+        Node(char ch) : ch(ch), freq(0), left(nullptr), right(nullptr) {}
+        Node(char ch, int freq) : ch(ch), freq(freq), left(nullptr), right(nullptr) {}
+    };
+
+    static void encode(Node *root, string str,
+                       unordered_map<char, string> &huffmanCode)
+    {
+        if (root == nullptr)
+            return;
+
+        if (!root->left && !root->right)
+        {
+            huffmanCode[root->ch] = str;
+        }
+
+        encode(root->left, str + "0", huffmanCode);
+        encode(root->right, str + "1", huffmanCode);
     }
 };
 
@@ -128,7 +190,7 @@ public:
                { return user1.name < user2.name; });
         for (auto it = users.begin(); it != users.end(); ++it)
         {
-            cout << "Name: " << it->name << ", Age: " << it->age << ", Gender: " << it->gender << ", Favorite Color: " << it->favorite_color << endl;
+            cout << "Name: " << it->name << ", Age: " << it->age << ", Gender: " << it->gender << ", Favorite Color: " << it->favorite_color << ", Password: " << it->password << endl;
         }
     }
 
@@ -138,7 +200,7 @@ public:
                { return user1.age < user2.age; });
         for (auto it = users.begin(); it != users.end(); ++it)
         {
-            cout << "Name: " << it->name << ", Age: " << it->age << ", Gender: " << it->gender << ", Favorite Color: " << it->favorite_color << endl;
+            cout << "Name: " << it->name << ", Age: " << it->age << ", Gender: " << it->gender << ", Favorite Color: " << it->favorite_color << ", Password: " << it->password << endl;
         }
     }
 
