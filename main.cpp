@@ -206,14 +206,14 @@ public:
 
     void addDummyUsers()
     {
-        add_new_user(User("Alice", 22, 'F', "Blue"));
-        add_new_user(User("Bob", 26, 'M', "Green"));
-        add_new_user(User("Charlie", 30, 'M', "Red"));
-        add_new_user(User("David", 28, 'M', "Blue"));
-        add_new_user(User("Eve", 22, 'F', "Green"));
-        add_new_user(User("Frank", 32, 'M', "Yellow"));
-        add_new_user(User("Grace", 29, 'F', "Red"));
-        add_new_user(User("Henry", 27, 'M', "Blue"));
+        add_new_user(User("Aman", 22, 'F', "Blue"));
+        add_new_user(User("Ball", 26, 'M', "Green"));
+        add_new_user(User("Cat", 30, 'M', "Red"));
+        add_new_user(User("Dark", 28, 'M', "Blue"));
+        add_new_user(User("Evil", 22, 'F', "Green"));
+        add_new_user(User("For", 32, 'M', "Yellow"));
+        add_new_user(User("Github", 29, 'F', "Red"));
+        add_new_user(User("Harshit", 27, 'M', "Blue"));
     }
 
     vector<User> find_similar_named_users(string name)
