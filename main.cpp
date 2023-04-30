@@ -291,9 +291,30 @@ int main()
             break;
 
         case 1:
-            // graph.add_new_user();
-            break;
+        {
+            string new_user_name, new_favorite_color, new_password;
+            int new_age;
+            char new_gender;
 
+            cout << "Enter user details: " << endl;
+            cout << "Name: ";
+            cin >> new_user_name;
+            cout << "Age: ";
+            cin >> new_age;
+            cout << "Gender (M/F): ";
+            cin >> new_gender;
+            cout << "Favorite Color: ";
+            cin >> new_favorite_color;
+            cout << "Password: ";
+            cin >> new_password;
+
+            User user(new_user_name, new_age, new_gender, new_favorite_color, new_password);
+            graph.add_new_user(user);
+
+            cout << "New user added successfully!" << endl;
+
+            break;
+        }
         case 2:
         {
 
